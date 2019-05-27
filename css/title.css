@@ -1,0 +1,12 @@
+.title-bg{
+	background-color: #000000;
+}
+
+.title-text-color{
+	color: #FAFAFA;
+}
+
+
+.mui-bar-tab .mui-tab-item.mui-active {
+	color: #EC971F;
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/title.css" />
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+      	mui.plusReady(function(){
+      		//设置iphone顶端颜色
+      		plus.navigator.setStatusBarStyle("light");
+      		plus.navigator.setStatusBarBackground("#000000");
+      	});
+    </script>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav title-bg">
+	    <h1 class="mui-title title-text-color" id="machat_title">machat</h1>
+	</header>
+	
+	<nav class="mui-bar mui-bar-tab">
+		<!--
+        	作者：104280826@qq.com
+        	时间：2019-01-03
+        	描述：https://www.iconfont.cn/可找 图标
+        -->
+	    <a class="mui-tab-item mui-active" tabindex="0">
+	        <span class="mui-icon mui-icon-chatbubble"></span>
+	        <span class="mui-tab-label">聊天</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="1">
+	        <span class="mui-icon mui-icon-contact" ></span>
+	        <span class="mui-tab-label">通讯录</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="2">
+	        <span class="mui-icon mui-icon-search"></span>
+	        <span class="mui-tab-label">发现</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="3">
+	        <span class="mui-icon mui-icon-person"></span>
+	        <span class="mui-tab-label">我</span>
+	    </a>
+	</nav>
+	
+	<script type="text/javascript">
+		
+		var pagelist = [
+			{
+				pageId: "chatpage.html",
+				pageUrl: "chatpage.html"
+			},
+			{
+				pageId: "contactpage.html",
+				pageUrl: "contactpage.html"
+			},
+			{
+				pageId: "findpage.html",
+				pageUrl: "findpage.html"
+			},
+			{
+				pageId: "mypage.html",
+				pageUrl: "mypage.html"
+			}
+		];
+		
+		var pagesize = {
+			top: "44px",
+			bottom: "50px"
+		};
+		
+		mui.plusReady(function(){
+			// 禁止android返回键
+			mui.back = function() {
+				return false;
+			}
+			
+			netChangeSwitch();
+			
+			// 获取当前的webview对象，webview里存储页面
+			var indexWebview = plus.webview.currentWebview();
+			for(var i = 0;i < pagelist.length;i++){
+				var page = plus.webview.create(pagelist[i].pageUrl,pagelist[i].pageId,pagesize);
+				page.hide();
+				indexWebview.append(page);
+			}
+			plus.webview.show(pagelist[0].pageId);
+			
+			//以下为触碰显示界面
+			mui(".mui-bar-tab").on("tap","a",function(){
+			var tabindex = this.getAttribute("tabindex");
+			plus.webview.show(pagelist[tabindex].pageId, "fade-in", 300);
+			// 隐藏其他的不需要的页面
+			for (var i = 0 ; i < pagelist.length ; i ++) {
+				if (i != tabindex) {
+					plus.webview.hide(pagelist[i].pageId, "fade-out", 300);
+				}
+			}
+		});
+		// 延时加载
+		setTimeout("initData()", "1000");
+		});
+		
+
+		// 监听网络状态更改
+		function netChangeSwitch(){
+			document.addEventListener("netchange", function(){
+				// 网络状态获取和判断
+				var connectionStatus = plus.networkinfo.getCurrentType();
+				if (connectionStatus != 0 && connectionStatus != 1) {
+					// 重新打开网络连接
+					var machat_title = document.getElementById("machat_title");
+					machat_title.innerHTML = "<b>machat</b>";
+				} else {
+					// 关闭网络连接
+					var machat_title = document.getElementById("machat_title");
+					machat_title.innerHTML = "<b>machat(未连接)</b>";
+				}
+			});
+		}
+
+
+		// 预加载
+		function initData() {
+			var chatpage = plus.webview.getWebviewById("chatpage.html");
+			mui.fire(chatpage, "refresh");		
+			var mypage = plus.webview.getWebviewById("mypage.html");
+			mui.fire(mypage, "refresh");
+		}
+	</script>
+</body>
+</html>
